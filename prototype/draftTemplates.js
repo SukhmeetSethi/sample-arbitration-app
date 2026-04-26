@@ -1,0 +1,208 @@
+const DRAFT_TEMPLATES = {
+  'section-21': {
+    name: 'Arbitration Notice (Section 21)', section: 'Section 21', forRole: ['claimant'], category: 'Pre-Arbitration',
+    description: 'Formal notice invoking arbitration clause to commence proceedings.',
+    questions: [
+      { id: 'contract_date', q: 'What is the date of the agreement/contract between the parties?', type: 'text', placeholder: 'e.g., 15 March 2025' },
+      { id: 'contract_type', q: 'What type of agreement is it?', type: 'select', options: ['Service Agreement', 'Supply Agreement', 'Construction Contract', 'Employment Agreement', 'Licensing Agreement', 'Partnership Agreement', 'Other'] },
+      { id: 'clause_number', q: 'Which clause contains the arbitration clause?', type: 'text', placeholder: 'e.g., Clause 14.2' },
+      { id: 'dispute_summary', q: 'Briefly describe the dispute — what went wrong?', type: 'textarea', placeholder: 'e.g., Respondent failed to deliver goods worth ₹45 lakhs...' },
+      { id: 'amount_claimed', q: 'Total amount you are claiming (₹)?', type: 'text', placeholder: 'e.g., 45,00,000' },
+      { id: 'relief_details', q: 'What specific relief are you seeking beyond the monetary claim?', type: 'textarea', placeholder: 'e.g., Interest at 18% p.a., specific performance...' },
+      { id: 'seat', q: 'What should be the seat (place) of arbitration?', type: 'text', placeholder: 'e.g., New Delhi' },
+      { id: 'language', q: 'Language of arbitration?', type: 'select', options: ['English', 'Hindi', 'English and Hindi'] },
+    ],
+  },
+  'section-9': {
+    name: 'Interim Measures — Court (Section 9)', section: 'Section 9', forRole: ['claimant', 'respondent'], category: 'Applications',
+    description: 'Application to court for interim measures before or during arbitration — preservation of goods, securing amounts, interim injunctions.',
+    questions: [
+      { id: 'court_name', q: 'Which court should this application be filed in?', type: 'select', options: ['Delhi High Court', 'Bombay High Court', 'Madras High Court', 'Calcutta High Court', 'Karnataka High Court', 'District Court'] },
+      { id: 'measure_type', q: 'What type of interim measure do you need?', type: 'select', options: ['Preservation of goods', 'Securing disputed amount', 'Interim injunction', 'Appointment of receiver', 'Inspection of property', 'Other'] },
+      { id: 'urgency_reason', q: 'Why is this measure urgently needed?', type: 'textarea', placeholder: 'Explain the urgency...' },
+      { id: 'facts_supporting', q: 'Key facts supporting your application?', type: 'textarea', placeholder: 'Describe the facts...' },
+      { id: 'relief_sought', q: 'Specific interim measures requested?', type: 'textarea', placeholder: 'Detail the relief sought...' },
+    ],
+  },
+  'section-11': {
+    name: 'Appointment of Arbitrator (Section 11)', section: 'Section 11', forRole: ['claimant', 'respondent'], category: 'Pre-Arbitration',
+    description: 'Court application when parties fail to agree on arbitrator appointment within 30 days.',
+    questions: [
+      { id: 'court_name', q: 'Which court should this be filed in?', type: 'select', options: ['Supreme Court of India', 'Delhi High Court', 'Bombay High Court', 'Madras High Court', 'Calcutta High Court', 'Karnataka High Court'] },
+      { id: 'agreement_date', q: 'Date of the agreement containing the arbitration clause?', type: 'text', placeholder: 'e.g., 15 March 2025' },
+      { id: 'notice_date', q: 'When was the Section 21 notice sent?', type: 'text', placeholder: 'e.g., 15 January 2026' },
+      { id: 'failure_reason', q: 'Why has the arbitrator appointment failed?', type: 'textarea', placeholder: 'e.g., Respondent did not respond within 30 days...' },
+      { id: 'proposed_arbitrator', q: 'Do you have a proposed arbitrator?', type: 'textarea', placeholder: 'Name and qualifications...' },
+      { id: 'dispute_value', q: 'Value of the dispute (₹)?', type: 'text', placeholder: 'e.g., 45,00,000' },
+    ],
+  },
+  'section-12-disclosure': {
+    name: 'Arbitrator Disclosure (Section 12)', section: 'Section 12 / Fifth Schedule', forRole: ['arbitrator'], category: 'Arbitrator Documents',
+    description: 'Mandatory disclosure of circumstances that may give rise to justifiable doubts about independence or impartiality.',
+    questions: [
+      { id: 'case_reference', q: 'Case number for this disclosure?', type: 'text', placeholder: 'e.g., ARB-2026-00142' },
+      { id: 'relationship_parties', q: 'Any past or present relationship with parties or their counsel?', type: 'textarea', placeholder: 'Describe any relationships...' },
+      { id: 'financial_interest', q: 'Any financial interest in the dispute or its outcome?', type: 'textarea', placeholder: 'Describe any financial interests...' },
+      { id: 'prior_involvement', q: 'Any prior involvement with the subject matter of the dispute?', type: 'textarea', placeholder: 'Describe any prior involvement...' },
+      { id: 'other_circumstances', q: 'Any other circumstances to disclose under the Fifth Schedule?', type: 'textarea', placeholder: 'Any other relevant circumstances...' },
+    ],
+  },
+  'section-13-challenge': {
+    name: 'Challenge to Arbitrator (Section 13)', section: 'Section 13', forRole: ['claimant', 'respondent'], category: 'Applications',
+    description: 'Written challenge to arbitrator on grounds of bias, lack of independence, or missing qualifications. Must be filed within 15 days.',
+    questions: [
+      { id: 'arbitrator_name', q: 'Name of the arbitrator being challenged?', type: 'text', placeholder: 'Full name of arbitrator' },
+      { id: 'grounds', q: 'Primary ground for the challenge?', type: 'select', options: ['Lack of independence', 'Lack of impartiality', 'Lack of agreed qualifications', 'Relationship with a party', 'Financial interest in outcome'] },
+      { id: 'detailed_grounds', q: 'Detailed reasons for the challenge?', type: 'textarea', placeholder: 'Explain in detail...' },
+      { id: 'evidence_summary', q: 'What evidence supports the challenge?', type: 'textarea', placeholder: 'Summarize the evidence...' },
+    ],
+  },
+  'section-16-jurisdiction': {
+    name: 'Jurisdictional Objection (Section 16)', section: 'Section 16', forRole: ['respondent'], category: 'Applications',
+    description: 'Plea that the tribunal lacks jurisdiction or that the arbitration agreement is invalid. Must be raised before filing defence.',
+    questions: [
+      { id: 'objection_type', q: 'Type of jurisdictional objection?', type: 'select', options: ['No valid arbitration agreement', 'Dispute not covered by arbitration clause', 'Tribunal not properly constituted', 'Claims beyond scope of agreement'] },
+      { id: 'detailed_objection', q: 'Detailed grounds for the objection?', type: 'textarea', placeholder: 'Explain the jurisdictional issue...' },
+      { id: 'legal_basis', q: 'Legal provisions and case law supporting your objection?', type: 'textarea', placeholder: 'Cite relevant law and precedents...' },
+    ],
+  },
+  'section-17-interim': {
+    name: 'Interim Measures — Tribunal (Section 17)', section: 'Section 17', forRole: ['claimant', 'respondent'], category: 'Applications',
+    description: 'Application to the arbitral tribunal for interim measures during proceedings — injunctions, preservation orders, receivers.',
+    questions: [
+      { id: 'measure_type', q: 'What type of interim measure?', type: 'select', options: ['Interim injunction', 'Preservation of property', 'Securing disputed amount', 'Appointment of receiver', 'Inspection order', 'Anti-dissipation order'] },
+      { id: 'urgency', q: 'Why is this measure urgently needed?', type: 'textarea', placeholder: 'Explain the urgency...' },
+      { id: 'prima_facie_case', q: 'Brief merits showing likelihood of success?', type: 'textarea', placeholder: 'Summarize your prima facie case...' },
+      { id: 'balance_convenience', q: 'Why does balance of convenience favour you?', type: 'textarea', placeholder: 'Explain...' },
+      { id: 'irreparable_harm', q: 'What irreparable harm will occur without this measure?', type: 'textarea', placeholder: 'Describe the harm...' },
+    ],
+  },
+  'statement-of-claim': {
+    name: 'Statement of Claim (Section 23)', section: 'Section 23', forRole: ['claimant'], category: 'Pleadings',
+    description: 'Detailed statement of facts, issues, and relief sought by the Claimant with all supporting documents.',
+    questions: [
+      { id: 'factual_background', q: 'Provide a chronological narration of facts giving rise to the dispute.', type: 'textarea', placeholder: 'Start from the agreement, then describe events leading to the dispute...' },
+      { id: 'contractual_terms', q: 'Which contract clauses were breached and how?', type: 'textarea', placeholder: 'Cite specific clauses and describe the breach...' },
+      { id: 'issues_for_determination', q: 'What specific issues should the tribunal decide?', type: 'textarea', placeholder: 'e.g., Whether the respondent breached Clause 5.2...' },
+      { id: 'damages_computation', q: 'Provide an itemized computation of damages claimed.', type: 'textarea', placeholder: 'e.g., Principal: ₹30L, Interest: ₹8L, Consequential damages: ₹7L...' },
+      { id: 'relief_sought', q: 'What relief are you seeking from the tribunal?', type: 'textarea', placeholder: 'All relief sought...' },
+      { id: 'exhibits_list', q: 'List the supporting documents you are filing.', type: 'textarea', placeholder: 'e.g., Exhibit A — Agreement, Exhibit B — Invoices...' },
+    ],
+  },
+  'defence': {
+    name: 'Statement of Defence (Section 23)', section: 'Section 23', forRole: ['respondent'], category: 'Pleadings',
+    description: 'Respondent reply to Statement of Claim with counter-arguments and optional counterclaim.',
+    questions: [
+      { id: 'notice_date', q: 'When did you receive the arbitration notice?', type: 'text', placeholder: 'e.g., 20 January 2026' },
+      { id: 'admit_deny', q: 'Do you admit or deny the arbitration agreement?', type: 'select', options: ['Admit the arbitration agreement', 'Deny — no valid clause exists', 'Admit but challenge jurisdiction'] },
+      { id: 'factual_response', q: 'Provide your version of the facts.', type: 'textarea', placeholder: 'What actually happened from your perspective...' },
+      { id: 'objections', q: 'Any preliminary objections? (jurisdiction, limitation, arbitrability)', type: 'textarea', placeholder: 'e.g., Claim is time-barred...' },
+      { id: 'counterclaim', q: 'Do you wish to file a counterclaim? If yes, describe it.', type: 'textarea', placeholder: 'Counterclaim details...' },
+      { id: 'proposed_arbitrator', q: 'Response to proposed arbitrator?', type: 'textarea', placeholder: 'Agree or suggest alternative...' },
+    ],
+  },
+  'rejoinder': {
+    name: 'Rejoinder (Section 23)', section: 'Section 23', forRole: ['claimant'], category: 'Pleadings',
+    description: 'Claimant reply to Statement of Defence, addressing new points raised by Respondent.',
+    questions: [
+      { id: 'response_to_objections', q: 'Counter-arguments to any preliminary objections raised?', type: 'textarea', placeholder: 'Address each objection...' },
+      { id: 'response_to_defence', q: 'Point-by-point rebuttal of defence arguments?', type: 'textarea', placeholder: 'Rebut the key defence points...' },
+      { id: 'response_to_counterclaim', q: 'Defence against any counterclaim?', type: 'textarea', placeholder: 'If counterclaim was filed, respond here...' },
+      { id: 'additional_evidence', q: 'Any new evidence in response to the defence?', type: 'textarea', placeholder: 'Describe additional evidence...' },
+    ],
+  },
+  'sur-rejoinder': {
+    name: 'Sur-Rejoinder', section: 'Section 23', forRole: ['respondent'], category: 'Pleadings',
+    description: 'Respondent reply to the Rejoinder, if permitted by the tribunal.',
+    questions: [
+      { id: 'response_to_rejoinder', q: 'Response to points raised in the Rejoinder?', type: 'textarea', placeholder: 'Address the Rejoinder arguments...' },
+      { id: 'additional_facts', q: 'Any additional facts or clarifications?', type: 'textarea', placeholder: 'Provide clarifications...' },
+      { id: 'additional_evidence', q: 'Any further evidence?', type: 'textarea', placeholder: 'Describe additional evidence...' },
+    ],
+  },
+  'written-arguments': {
+    name: 'Written Submissions (Section 24)', section: 'Section 24', forRole: ['claimant', 'respondent'], category: 'Pleadings',
+    description: 'Final written arguments summarizing the case with legal authorities and case law citations.',
+    questions: [
+      { id: 'summary_of_facts', q: 'Brief factual summary as established during proceedings?', type: 'textarea', placeholder: 'Summarize the key facts...' },
+      { id: 'issues_and_arguments', q: 'Issue-wise legal arguments with case law citations?', type: 'textarea', placeholder: 'For each issue, provide arguments and cite authorities...' },
+      { id: 'evidence_analysis', q: 'Key evidence and its impact on each issue?', type: 'textarea', placeholder: 'Analyze the evidence...' },
+      { id: 'prayer', q: 'Final relief sought from the tribunal?', type: 'textarea', placeholder: 'State your prayer...' },
+    ],
+  },
+  'procedural-order': {
+    name: 'Procedural Order (Section 19)', section: 'Section 19', forRole: ['arbitrator'], category: 'Arbitrator Documents',
+    description: 'Tribunal order setting out procedural rules, timelines, hearing schedule, and directions.',
+    questions: [
+      { id: 'hearing_schedule', q: 'Proposed hearing dates and times?', type: 'textarea', placeholder: 'e.g., Hearing 1: 15 May 2026, 10:30 AM...' },
+      { id: 'filing_deadlines', q: 'Deadlines for pleadings (Claim, Defence, Rejoinder)?', type: 'textarea', placeholder: 'e.g., Statement of Claim: within 30 days...' },
+      { id: 'document_production', q: 'Directions for document production?', type: 'textarea', placeholder: 'e.g., Parties to exchange documents within 15 days...' },
+      { id: 'procedural_rules', q: 'Any specific procedural rules?', type: 'textarea', placeholder: 'e.g., Evidence on affidavit, cross-examination limited to 2 hours...' },
+      { id: 'other_directions', q: 'Any other directions?', type: 'textarea', placeholder: 'Additional directions...' },
+    ],
+  },
+  'arbitral-award': {
+    name: 'Arbitral Award (Section 31)', section: 'Section 31 / Section 29A', forRole: ['arbitrator'], category: 'Arbitrator Documents',
+    description: 'Final reasoned award — must be in writing, signed, state reasons, include date and place. Due within 12 months (Section 29A).',
+    questions: [
+      { id: 'issues_determined', q: 'What issues were framed and determined?', type: 'textarea', placeholder: 'List the issues...' },
+      { id: 'findings_of_fact', q: 'Findings on factual issues?', type: 'textarea', placeholder: 'State findings on each factual issue...' },
+      { id: 'legal_analysis', q: 'Legal analysis and reasoning?', type: 'textarea', placeholder: 'Legal reasoning for the award...' },
+      { id: 'award_amount', q: 'Amount awarded, if any (₹)?', type: 'text', placeholder: 'e.g., 38,50,000' },
+      { id: 'interest_rate', q: 'Interest rate awarded?', type: 'text', placeholder: 'e.g., 12% p.a. from date of claim' },
+      { id: 'costs_direction', q: 'Direction on costs of arbitration?', type: 'textarea', placeholder: 'Who bears the costs...' },
+      { id: 'operative_part', q: 'Final operative directions/orders?', type: 'textarea', placeholder: 'The tribunal hereby orders...' },
+    ],
+  },
+  'section-33-correction': {
+    name: 'Correction of Award (Section 33)', section: 'Section 33', forRole: ['claimant', 'respondent'], category: 'Post-Award',
+    description: 'Request to correct computation/clerical errors in the award, or to give interpretation of a specific point. Must be filed within 30 days.',
+    questions: [
+      { id: 'error_type', q: 'Type of correction needed?', type: 'select', options: ['Computation error', 'Clerical/typographical error', 'Request for interpretation', 'Additional award for omitted claims'] },
+      { id: 'error_details', q: 'Describe the specific error or point?', type: 'textarea', placeholder: 'e.g., Para 45 states ₹38.5L but computation shows ₹42L...' },
+      { id: 'proposed_correction', q: 'What should the corrected text read?', type: 'textarea', placeholder: 'Proposed correction...' },
+    ],
+  },
+  'section-34': {
+    name: 'Set Aside Award (Section 34)', section: 'Section 34', forRole: ['claimant', 'respondent'], category: 'Post-Award',
+    description: 'Court application to set aside an arbitral award. Must be filed within 3 months (+30 days condonable). Grounds: incapacity, invalid agreement, lack of notice, beyond scope, public policy.',
+    questions: [
+      { id: 'court_name', q: 'Which court to file in?', type: 'select', options: ['Delhi High Court', 'Bombay High Court', 'Madras High Court', 'Calcutta High Court', 'Karnataka High Court'] },
+      { id: 'award_date', q: 'Date of the award?', type: 'text', placeholder: 'e.g., 20 November 2025' },
+      { id: 'grounds', q: 'Primary ground for setting aside?', type: 'select', options: ['Party incapacity — S.34(2)(a)(i)', 'Invalid arbitration agreement — S.34(2)(a)(ii)', 'Lack of proper notice — S.34(2)(a)(iii)', 'Award beyond scope — S.34(2)(a)(iv)', 'Improper tribunal composition — S.34(2)(a)(v)', 'Subject not arbitrable — S.34(2)(b)(i)', 'Conflict with public policy — S.34(2)(b)(ii)', 'Patent illegality'] },
+      { id: 'detailed_grounds', q: 'Detailed grounds for setting aside?', type: 'textarea', placeholder: 'Explain in detail...' },
+      { id: 'legal_arguments', q: 'Legal arguments with case law?', type: 'textarea', placeholder: 'Cite relevant precedents...' },
+    ],
+  },
+  'section-36': {
+    name: 'Enforcement Petition (Section 36)', section: 'Section 36', forRole: ['claimant'], category: 'Post-Award',
+    description: 'Petition to enforce the arbitral award as a decree of the court.',
+    questions: [
+      { id: 'court_name', q: 'Which court to file in?', type: 'select', options: ['Delhi High Court', 'Bombay High Court', 'Madras High Court', 'Calcutta High Court', 'Karnataka High Court', 'District Court'] },
+      { id: 'award_date', q: 'Date of the award?', type: 'text', placeholder: 'e.g., 20 November 2025' },
+      { id: 'award_amount', q: 'Amount awarded (₹)?', type: 'text', placeholder: 'e.g., 10,25,000' },
+      { id: 'no_challenge', q: 'Status of any Section 34 challenge?', type: 'select', options: ['No Section 34 application filed', 'Section 34 application was dismissed', 'Section 34 period has expired'] },
+      { id: 'execution_directions', q: 'Specific enforcement directions sought?', type: 'textarea', placeholder: 'e.g., Attachment of respondent bank accounts...' },
+    ],
+  },
+  'settlement-agreement': {
+    name: 'Settlement Agreement (Section 30)', section: 'Section 30', forRole: ['claimant', 'respondent', 'arbitrator'], category: 'Pleadings',
+    description: 'Agreement recording settlement terms, which can be recorded as an arbitral award on agreed terms.',
+    questions: [
+      { id: 'settlement_terms', q: 'What are the agreed terms of settlement?', type: 'textarea', placeholder: 'Describe the settlement terms...' },
+      { id: 'payment_terms', q: 'Payment amounts, schedule, and mode?', type: 'textarea', placeholder: 'e.g., ₹25L in 3 instalments...' },
+      { id: 'other_obligations', q: 'Any other obligations agreed upon?', type: 'textarea', placeholder: 'e.g., Non-compete, confidentiality...' },
+      { id: 'consequences_of_breach', q: 'Consequences if settlement terms are breached?', type: 'textarea', placeholder: 'e.g., Original claim revives with interest...' },
+    ],
+  },
+  'conciliation-request': {
+    name: 'Invitation to Conciliate (Section 62)', section: 'Section 62 (Part III)', forRole: ['claimant', 'respondent'], category: 'Conciliation',
+    description: 'Written invitation to the other party to conciliate under Part III of the Act.',
+    questions: [
+      { id: 'dispute_summary', q: 'Brief description of the dispute?', type: 'textarea', placeholder: 'Describe the dispute...' },
+      { id: 'proposed_conciliator', q: 'Proposed conciliator, if any?', type: 'textarea', placeholder: 'Name and qualifications...' },
+      { id: 'proposed_venue', q: 'Proposed venue for conciliation?', type: 'text', placeholder: 'e.g., New Delhi' },
+      { id: 'preferred_timeline', q: 'Preferred timeline for resolution?', type: 'text', placeholder: 'e.g., Within 60 days' },
+    ],
+  },
+};
