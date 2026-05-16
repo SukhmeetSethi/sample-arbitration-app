@@ -113,13 +113,13 @@ function CaseDetail({ caseData, role, onBack, onJoinHearing, onOpenDrafter, show
       <div className="detail-body">
         {tab === 'overview' && (
           <div>
-            {needsResponse && (
-              <div style={{background:'#fff5f5',border:'1px solid #fed7d7',borderRadius:'var(--radius)',padding:16,marginBottom:16}}>
-                <div style={{fontWeight:600,color:'#c53030',marginBottom:4}}>⚠ Action Required: Reply to Arbitration Notice</div>
-                <div style={{fontSize:'0.85rem',color:'var(--text-light)',marginBottom:10}}>You have received an arbitration notice under Section 21. You must file your response within 30 days. Use the AI Drafting Engine to prepare your Statement of Defence.</div>
-                <button className="btn btn-primary" onClick={() => onOpenDrafter('defence', caseData)}>📝 Draft Response with AI</button>
-              </div>
+            {role === 'claimant' && caseData.noticeServed && !caseData.responseReceived && (
+              <Section11Trigger caseData={caseData} role={role} showToast={showToast} />
             )}
+            {needsResponse && (
+              <RespondentNoticeView caseData={caseData} role={role} showToast={showToast} onOpenDrafter={onOpenDrafter} />
+            )}
+            {!needsResponse && (
             <div className="info-grid">
               <div className="info-item"><div className="info-label">Dispute Value</div><div className="info-value">{caseData.value}</div></div>
               <div className="info-item"><div className="info-label">Institution</div><div className="info-value">{caseData.institution || 'Ad-hoc'}</div></div>
@@ -130,22 +130,11 @@ function CaseDetail({ caseData, role, onBack, onJoinHearing, onOpenDrafter, show
               <div className="info-item"><div className="info-label">Next Hearing</div><div className="info-value">{caseData.nextHearing || 'None scheduled'}</div></div>
               <div className="info-item"><div className="info-label">Notice Served</div><div className="info-value">{caseData.noticeServed ? '✅ Yes' : '❌ No'}</div></div>
             </div>
+            )}
           </div>
         )}
         {tab === 'documents' && (
-          <div>
-            <div style={{marginBottom:12,display:'flex',gap:8}}>
-              <button className="btn btn-primary btn-sm" onClick={() => onOpenDrafter('picker', caseData)}>📝 Draft Document with AI</button>
-              <button className="btn btn-outline btn-sm">+ Upload Document</button>
-            </div>
-            {docs.map(d => (
-              <div key={d.id} className="doc-item">
-                <div className="doc-icon">{d.type === 'Recording' ? '🎥' : '📄'}</div>
-                <div className="doc-info"><div className="doc-name">{d.name}</div><div className="doc-meta">{d.type} · {d.uploadedBy} · {d.date} · {d.size}</div></div>
-                <button className="btn btn-outline btn-sm">Download</button>
-              </div>
-            ))}
-          </div>
+          <DocumentWorkflow caseData={caseData} role={role} showToast={showToast} />
         )}
         {tab === 'hearings' && (
           <div>

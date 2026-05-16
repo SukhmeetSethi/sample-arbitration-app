@@ -107,7 +107,8 @@ function App() {
         </div>
 
         <div className="page-content">
-          {page === 'dashboard' && <Dashboard cases={cases} role={role} onViewCase={handleViewCase} onNavigate={setPage} />}
+          {page === 'dashboard' && role === 'arbitrator' && <InstitutionDashboard cases={cases} role={role} />}
+          {page === 'dashboard' && role !== 'arbitrator' && <Dashboard cases={cases} role={role} onViewCase={handleViewCase} onNavigate={setPage} />}
           {page === 'cases' && !selectedCase && <CasesList cases={cases} role={role} onViewCase={handleViewCase} onNewCase={() => setShowNewCase(true)} />}
           {page === 'caseDetail' && selectedCase && <CaseDetail caseData={selectedCase} role={role} onBack={() => setPage('cases')} onJoinHearing={handleJoinHearing} onOpenDrafter={handleOpenDrafter} showToast={showToast} />}
           {page === 'arbitrators' && <ArbitratorMarketplace arbitrators={MOCK.arbitrators} role={role} onNavigate={setPage} />}
